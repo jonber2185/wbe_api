@@ -24,7 +24,7 @@ def update_user_password(user_id, new_password):
         (password, user_id)
     )
 
-def edit_user_username(user_id, new_username):
+def update_user_username(user_id, new_username):
     username = new_username.strip()
     if not user_model.is_valid_username(username):
         raise e.UserValidationError("이름 형식이 잘못되었습니다.")
@@ -34,7 +34,7 @@ def edit_user_username(user_id, new_username):
         (username, user_id)
     )
 
-def edit_user_vegan(user_id, vegan):
+def update_user_vegan(user_id, vegan):
     if not user_model.is_valid_vegan(vegan):
         raise e.UserValidationError("비견 형식이 잘못되었습니다.")
 
