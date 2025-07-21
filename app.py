@@ -6,20 +6,20 @@ app = Flask(__name__)
 
 @app.route('/create_user')
 def create_user():
-    # POST {
-    #     'user_id': "~~~~",
-    #     'password': "~~~",
-    #     'username': "~~",
-    # }
-
-    # json = request.get_json()
-
     try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        password = data.get('password')
+        username = data.get('username')
+        vegan = data.get('vegan', 'none')  # 기본값 설정
+        birth=data.get('birth', None)
+
         db.user.create.create_user(
-            user_id="jonber2185",
-            password='qwert2846',
-            username='jonber',
-            vegan="none"
+            user_id=user_id,
+            password=password,
+            username=username,
+            vegan=vegan,
+            birth=birth
         )
         return jsonify({ "message": "유저가 생성되었습니다!" }), 201
     except db.user.error.UserError as e:
