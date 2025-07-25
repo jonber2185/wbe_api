@@ -7,7 +7,7 @@ def update_user_id(user_id, new_user_id):
     if not user_model.is_valid_user_id(new_user_id):
         raise e.UserValidationError("ID 형식이 잘못되었습니다.")
     if not user_model.is_unique_user_id(new_user_id):
-        raise e.UserUniqueError("이미 존재하는 ID입니다.")
+        raise e.UserUniqueError()
 
     run_sql(
         "UPDATE users SET user_id = %s WHERE id = %s",

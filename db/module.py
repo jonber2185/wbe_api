@@ -17,6 +17,7 @@ def db_connection():
     return pymysql.connect(**db_config)
 
 def run_sql(sql, params=None, fetchone=False, fetchmany=False, return_id=False):
+    # return None
     with db_connection() as conn:
         with conn.cursor() as cursor:
             cursor.execute(sql, params)

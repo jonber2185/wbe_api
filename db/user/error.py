@@ -9,9 +9,9 @@ class UserError(Exception):
 
 class UserValidationError(UserError):
     def __init__(self, message: str):
-        super().__init__(message, status_code=400)
+        super().__init__(message)
 
 
 class UserUniqueError(UserError):
-    def __init__(self, message: str):
-        super().__init__(message, status_code=409)
+    def __init__(self):
+        super().__init__("이미 존재하는 ID입니다.", status_code=409)

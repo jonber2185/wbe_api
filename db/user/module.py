@@ -17,12 +17,16 @@ def is_valid_user_id(user_id: str) -> bool:
     return True
 
 def is_unique_user_id(user_id: str) -> bool:
-    result = run_sql("SELECT user_id FROM users WHERE user_id = %s", user_id)
-    if not list(result):
-        return True
-    else: return False
+    result = run_sql(
+        "SELECT user_id FROM users WHERE user_id = %s",
+        (user_id,),
+        fetchone=True
+    )
+    if result is not None:
+        return False
+    return True
 
-allowed_pw_pattern = r'^[A-Za-z0-9!@#$%^&*()-_=+[]{}:;,.?]+$'
+allowed_pw_pattern = r'^[A-Za-z0-9!@#$%^&*()\-_+=\[\]{}:;,.?]+$'
 def is_valid_password(password: str) -> bool:
     if len(password) < 8:
         return False
@@ -31,6 +35,11 @@ def is_valid_password(password: str) -> bool:
     if not re.match(allowed_pw_pattern, password):
         return False
     return True
+
+def hash_valid_password(password: str) -> str:
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed.decode('utf-8')  # DB에 저장할 문자열
 
 def is_valid_username(username: str) -> bool:
     if len(username) == 0:
@@ -53,10 +62,10 @@ def is_valid_vegan(vegan: str) -> bool:
         return True
     else: return False
 
-def hash_valid_password(password: str) -> str:
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
-    return hashed.decode('utf-8')  # DB에 저장할 문자열
-
-def check_valid_password(plain_password: str, hashed_password: str) -> bool:
-    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+def get_id_by_input_id(input_id: str) -> str:
+    result = run_sql(
+        "SELECT id FROM users WHERE user_id = %s",
+        (input_id,),
+        fetchone=True
+    )
+    return result.get("id", "")

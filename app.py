@@ -1,29 +1,21 @@
-from flask import Flask, jsonify, request
-import db
+from flask import Flask
+from flask_jwt_extended import JWTManager
+from datetime import timedelta
 
+import db.user.module
+from router.auth import AuthRouter
+from router.user import UserRouter
 
 app = Flask(__name__)
 
-@app.route('/create_user')
-def create_user():
-    try:
-        data = request.get_json()
-        user_id = data.get('user_id')
-        password = data.get('password')
-        username = data.get('username')
-        vegan = data.get('vegan', 'none')  # 기본값 설정
-        birth=data.get('birth', None)
+app.config['JWT_SECRET_KEY'] = 'test'
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=1)
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=1)
 
-        db.user.create.create_user(
-            user_id=user_id,
-            password=password,
-            username=username,
-            vegan=vegan,
-            birth=birth
-        )
-        return jsonify({ "message": "유저가 생성되었습니다!" }), 201
-    except db.user.error.UserError as e:
-        return jsonify({ "error": str(e.message) }), e.status_code
-    
+jwt = JWTManager(app)
+
+app.register_blueprint(AuthRouter, url_prefix='/auth')
+app.register_blueprint(UserRouter, url_prefix='/user')
+
 if __name__ == '__main__':
     app.run(debug=True)
