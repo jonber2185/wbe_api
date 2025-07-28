@@ -30,3 +30,24 @@ def create_user():
             "error": str(type(e).__name__),
             "message": str(e.message)
         }), e.status_code
+
+@UserRouter.route('/update_user_password',methods=['POST'])#update
+def update_user():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        password = data.get('password')
+
+        if not all([user_id, password]):
+            raise db.user.error.UserValidationError("잘못된 형식입니다.")
+
+        db.user.update.update_user_password(
+            user_id=user_id,
+            new_password=password
+        )
+        return jsonify({ "message": "유저 정보가 수정되었습니다!" }), 201
+    except db.user.error.UserError as e:
+        return jsonify({
+            "error": str(type(e).__name__),
+            "message": str(e.message)
+        }), e.status_code
